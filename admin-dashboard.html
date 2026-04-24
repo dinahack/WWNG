@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Westminster Woods</title>
+    <link rel="stylesheet" href="css/admin.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Admin Navigation -->
+    <nav class="admin-navbar">
+        <div class="navbar-brand">
+            <i class="fas fa-shield-alt"></i>
+            <span>Westminster Woods Admin</span>
+        </div>
+        <div class="navbar-menu">
+            <a href="admin-dashboard.html" class="nav-link active">Dashboard</a>
+            <a href="admin-events.html" class="nav-link">Events</a>
+            <a href="admin-photos.html" class="nav-link">Photos</a>
+            <a href="admin-profile.html" class="nav-link">Profile</a>
+            <button id="logout-btn" class="nav-link logout">Logout</button>
+        </div>
+    </nav>
+
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <aside class="admin-sidebar">
+            <div class="sidebar-menu">
+                <a href="admin-dashboard.html" class="menu-item active">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="admin-events.html" class="menu-item">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>Manage Events</span>
+                </a>
+                <a href="admin-photos.html" class="menu-item">
+                    <i class="fas fa-image"></i>
+                    <span>Manage Photos</span>
+                </a>
+                <a href="admin-profile.html" class="menu-item">
+                    <i class="fas fa-user-circle"></i>
+                    <span>Profile Settings</span>
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="admin-content">
+            <div class="dashboard-header">
+                <h1>Dashboard</h1>
+                <p>Welcome to your admin dashboard, <strong id="admin-username">Admin</strong></p>
+            </div>
+
+            <!-- Statistics -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon" style="background-color: #3498db;">
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 id="total-events">0</h3>
+                        <p>Total Events</p>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon" style="background-color: #2ecc71;">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 id="upcoming-events">0</h3>
+                        <p>Upcoming Events</p>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon" style="background-color: #e74c3c;">
+                        <i class="fas fa-image"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 id="total-photos">0</h3>
+                        <p>Total Photos</p>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon" style="background-color: #f39c12;">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>2,500+</h3>
+                        <p>Community Members</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="quick-actions">
+                <h2>Quick Actions</h2>
+                <div class="action-grid">
+                    <a href="admin-events.html" class="action-card">
+                        <i class="fas fa-plus"></i>
+                        <span>Add New Event</span>
+                    </a>
+                    <a href="admin-photos.html" class="action-card">
+                        <i class="fas fa-plus"></i>
+                        <span>Upload Photo</span>
+                    </a>
+                    <a href="index.html" class="action-card">
+                        <i class="fas fa-eye"></i>
+                        <span>View Website</span>
+                    </a>
+                    <a href="admin-profile.html" class="action-card">
+                        <i class="fas fa-cog"></i>
+                        <span>Settings</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Recent Events -->
+            <div class="recent-section">
+                <h2>Recent Events</h2>
+                <div id="recent-events-list" class="events-table">
+                    <!-- Events will be loaded here -->
+                </div>
+            </div>
+
+            <!-- Recent Photos -->
+            <div class="recent-section">
+                <h2>Recent Photos</h2>
+                <div id="recent-photos-grid" class="photos-preview">
+                    <!-- Photos will be loaded here -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/admin.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            checkAdminAccess();
+            loadDashboardData();
+            setupLogout();
+        });
+
+        function loadDashboardData() {
+            const adminUsername = localStorage.getItem('adminUsername');
+            document.getElementById('admin-username').textContent = adminUsername || 'Admin';
+
+            const events = JSON.parse(localStorage.getItem('communityEvents')) || [];
+            const photos = JSON.parse(localStorage.getItem('communityPhotos')) || [];
+
+            // Update stats
+            document.getElementById('total-events').textContent = events.length;
+            
+            const today = new Date();
+            const upcomingCount = events.filter(e => new Date(e.date) >= today).length;
+            document.getElementById('upcoming-events').textContent = upcomingCount;
+            
+            document.getElementById('total-photos').textContent = photos.length;
+
+            // Load recent events
+            const recentEvents = events.slice(-5).reverse();
+            const eventsList = document.getElementById('recent-events-list');
+            
+            if (recentEvents.length === 0) {
+                eventsList.innerHTML = '<p class="empty-message">No events yet. <a href="admin-events.html">Create one now</a></p>';
+            } else {
+                eventsList.innerHTML = `
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Date</th>
+                                <th>Category</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${recentEvents.map(event => `
+                                <tr>
+                                    <td><strong>${event.title}</strong></td>
+                                    <td>${event.date}</td>
+                                    <td><span class="badge">${event.category}</span></td>
+                                    <td>${new Date(event.date) >= today ? '<span class="status-upcoming">Upcoming</span>' : '<span class="status-past">Past</span>'}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+            }
+
+            // Load recent photos
+            const recentPhotos = photos.slice(-6).reverse();
+            const photosGrid = document.getElementById('recent-photos-grid');
+            
+            if (recentPhotos.length === 0) {
+                photosGrid.innerHTML = '<p class="empty-message">No photos yet. <a href="admin-photos.html">Upload one now</a></p>';
+            } else {
+                photosGrid.innerHTML = recentPhotos.map(photo => `
+                    <div class="photo-thumb">
+                        <img src="${photo.src}" alt="${photo.title}">
+                        <div class="photo-overlay">
+                            <p>${photo.title}</p>
+                        </div>
+                    </div>
+                `).join('');
+            }
+        }
+    </script>
+</body>
+</html>

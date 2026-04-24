@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Profile - Westminster Woods</title>
+    <link rel="stylesheet" href="css/admin.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Admin Navigation -->
+    <nav class="admin-navbar">
+        <div class="navbar-brand">
+            <i class="fas fa-shield-alt"></i>
+            <span>Westminster Woods Admin</span>
+        </div>
+        <div class="navbar-menu">
+            <a href="admin-dashboard.html" class="nav-link">Dashboard</a>
+            <a href="admin-events.html" class="nav-link">Events</a>
+            <a href="admin-photos.html" class="nav-link">Photos</a>
+            <a href="admin-profile.html" class="nav-link active">Profile</a>
+            <button id="logout-btn" class="nav-link logout">Logout</button>
+        </div>
+    </nav>
+
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <aside class="admin-sidebar">
+            <div class="sidebar-menu">
+                <a href="admin-dashboard.html" class="menu-item">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="admin-events.html" class="menu-item">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>Manage Events</span>
+                </a>
+                <a href="admin-photos.html" class="menu-item">
+                    <i class="fas fa-image"></i>
+                    <span>Manage Photos</span>
+                </a>
+                <a href="admin-profile.html" class="menu-item active">
+                    <i class="fas fa-user-circle"></i>
+                    <span>Profile Settings</span>
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="admin-content">
+            <div class="content-header">
+                <h1>Profile Settings</h1>
+            </div>
+
+            <div class="profile-container">
+                <!-- Profile Info -->
+                <div class="profile-card">
+                    <h2>Admin Profile</h2>
+                    <div class="profile-info">
+                        <div class="profile-avatar">
+                            <i class="fas fa-user-circle"></i>
+                        </div>
+                        <div class="profile-details">
+                            <p><strong>Username:</strong> <span id="profile-username">Admin</span></p>
+                            <p><strong>Role:</strong> <span id="profile-role">Administrator</span></p>
+                            <p><strong>Status:</strong> <span class="status-badge">Active</span></p>
+                            <p><strong>Joined:</strong> <span id="profile-joined">2024</span></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Change Password -->
+                <div class="profile-card">
+                    <h2>Change Password</h2>
+                    <form id="password-form" class="profile-form">
+                        <div class="form-group">
+                            <label for="current-password">Current Password *</label>
+                            <input type="password" id="current-password" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="new-password">New Password *</label>
+                            <input type="password" id="new-password" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="confirm-password">Confirm Password *</label>
+                            <input type="password" id="confirm-password" required>
+                        </div>
+
+                        <button type="submit" class="btn-primary">Update Password</button>
+                    </form>
+                </div>
+
+                <!-- Preferences -->
+                <div class="profile-card">
+                    <h2>Preferences</h2>
+                    <form id="preferences-form" class="profile-form">
+                        <div class="form-group">
+                            <label for="email-notifications">
+                                <input type="checkbox" id="email-notifications" checked>
+                                Receive email notifications for new registrations
+                            </label>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="event-reminders">
+                                <input type="checkbox" id="event-reminders" checked>
+                                Receive event reminders
+                            </label>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="maintenance-alerts">
+                                <input type="checkbox" id="maintenance-alerts" checked>
+                                Receive system maintenance alerts
+                            </label>
+                        </div>
+
+                        <button type="submit" class="btn-primary">Save Preferences</button>
+                    </form>
+                </div>
+
+                <!-- Admin Activity -->
+                <div class="profile-card">
+                    <h2>Admin Activity Log</h2>
+                    <div id="activity-log" class="activity-log">
+                        <p class="empty-message">No activity logged yet</p>
+                    </div>
+                </div>
+
+                <!-- Danger Zone -->
+                <div class="profile-card danger-zone">
+                    <h2>Danger Zone</h2>
+                    <p>Be careful! These actions cannot be undone.</p>
+                    <button id="clear-data-btn" class="btn-danger">Clear All Data</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/admin.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            checkAdminAccess();
+            loadProfileInfo();
+            setupProfileListeners();
+        });
+
+        function loadProfileInfo() {
+            const adminUsername = localStorage.getItem('adminUsername');
+            document.getElementById('profile-username').textContent = adminUsername || 'Admin';
+        }
+
+        function setupProfileListeners() {
+            document.getElementById('password-form').addEventListener('submit', handlePasswordChange);
+            document.getElementById('preferences-form').addEventListener('submit', handlePreferencesSave);
+            document.getElementById('clear-data-btn').addEventListener('click', handleClearData);
+            setupLogout();
+        }
+
+        function handlePasswordChange(e) {
+            e.preventDefault();
+
+            const currentPassword = document.getElementById('current-password').value;
+            const newPassword = document.getElementById('new-password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+
+            if (newPassword !== confirmPassword) {
+                alert('New passwords do not match!');
+                return;
+            }
+
+            if (currentPassword === 'admin123') {
+                localStorage.setItem('adminPassword', newPassword);
+                alert('Password changed successfully!');
+                document.getElementById('password-form').reset();
+            } else {
+                alert('Current password is incorrect!');
+            }
+        }
+
+        function handlePreferencesSave(e) {
+            e.preventDefault();
+            const preferences = {
+                emailNotifications: document.getElementById('email-notifications').checked,
+                eventReminders: document.getElementById('event-reminders').checked,
+                maintenanceAlerts: document.getElementById('maintenance-alerts').checked
+            };
+
+            localStorage.setItem('adminPreferences', JSON.stringify(preferences));
+            alert('Preferences saved successfully!');
+        }
+
+        function handleClearData() {
+            if (confirm('Are you absolutely sure? This will delete all events, photos, and data. This cannot be undone!')) {
+                if (confirm('Last confirmation: This will delete EVERYTHING. Are you sure?')) {
+                    localStorage.removeItem('communityEvents');
+                    localStorage.removeItem('communityPhotos');
+                    alert('All data has been cleared!');
+                    window.location.href = 'admin-dashboard.html';
+                }
+            }
+        }
+    </script>
+</body>
+</html>

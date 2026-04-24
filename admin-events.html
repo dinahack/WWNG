@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Events - Westminster Woods Admin</title>
+    <link rel="stylesheet" href="css/admin.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Admin Navigation -->
+    <nav class="admin-navbar">
+        <div class="navbar-brand">
+            <i class="fas fa-shield-alt"></i>
+            <span>Westminster Woods Admin</span>
+        </div>
+        <div class="navbar-menu">
+            <a href="admin-dashboard.html" class="nav-link">Dashboard</a>
+            <a href="admin-events.html" class="nav-link active">Events</a>
+            <a href="admin-photos.html" class="nav-link">Photos</a>
+            <a href="admin-profile.html" class="nav-link">Profile</a>
+            <button id="logout-btn" class="nav-link logout">Logout</button>
+        </div>
+    </nav>
+
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <aside class="admin-sidebar">
+            <div class="sidebar-menu">
+                <a href="admin-dashboard.html" class="menu-item">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="admin-events.html" class="menu-item active">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>Manage Events</span>
+                </a>
+                <a href="admin-photos.html" class="menu-item">
+                    <i class="fas fa-image"></i>
+                    <span>Manage Photos</span>
+                </a>
+                <a href="admin-profile.html" class="menu-item">
+                    <i class="fas fa-user-circle"></i>
+                    <span>Profile Settings</span>
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="admin-content">
+            <div class="content-header">
+                <h1>Manage Events</h1>
+                <button id="add-event-btn" class="btn-primary">
+                    <i class="fas fa-plus"></i> Add New Event
+                </button>
+            </div>
+
+            <!-- Events Filter -->
+            <div class="filter-section">
+                <input type="text" id="search-events" placeholder="Search events...">
+                <select id="filter-category">
+                    <option value="">All Categories</option>
+                    <option value="social">Social</option>
+                    <option value="educational">Educational</option>
+                    <option value="charity">Charity</option>
+                    <option value="sports">Sports</option>
+                </select>
+            </div>
+
+            <!-- Events List -->
+            <div id="events-container" class="events-container">
+                <!-- Events will be loaded here -->
+            </div>
+        </main>
+    </div>
+
+    <!-- Add/Edit Event Modal -->
+    <div id="event-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modal-title">Add New Event</h2>
+                <button class="modal-close">&times;</button>
+            </div>
+            <form id="event-form" class="modal-form">
+                <div class="form-group">
+                    <label for="event-title">Event Title *</label>
+                    <input type="text" id="event-title" required>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="event-date">Date *</label>
+                        <input type="date" id="event-date" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="event-time">Time *</label>
+                        <input type="time" id="event-time" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="event-location">Location *</label>
+                    <input type="text" id="event-location" placeholder="Enter event location" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="event-category">Category *</label>
+                    <select id="event-category" required>
+                        <option value="">Select Category</option>
+                        <option value="social">Social</option>
+                        <option value="educational">Educational</option>
+                        <option value="charity">Charity</option>
+                        <option value="sports">Sports</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="event-description">Description *</label>
+                    <textarea id="event-description" rows="4" placeholder="Event description" required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="event-image">Event Image URL</label>
+                    <input type="text" id="event-image" placeholder="Enter image URL or leave empty for default">
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary" id="modal-cancel">Cancel</button>
+                    <button type="submit" class="btn-primary">Save Event</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/admin.js"></script>
+    <script>
+        let currentEditingEventId = null;
+        const modal = document.getElementById('event-modal');
+        const eventForm = document.getElementById('event-form');
+
+        document.addEventListener('DOMContentLoaded', function() {
+            checkAdminAccess();
+            loadEvents();
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            document.getElementById('add-event-btn').addEventListener('click', openAddEventModal);
+            document.querySelector('.modal-close').addEventListener('click', closeModal);
+            document.getElementById('modal-cancel').addEventListener('click', closeModal);
+            document.getElementById('event-form').addEventListener('submit', handleEventSubmit);
+            document.getElementById('search-events').addEventListener('input', filterEvents);
+            document.getElementById('filter-category').addEventListener('change', filterEvents);
+            setupLogout();
+        }
+
+        function openAddEventModal() {
+            currentEditingEventId = null;
+            document.getElementById('modal-title').textContent = 'Add New Event';
+            eventForm.reset();
+            modal.style.display = 'block';
+        }
+
+        function closeModal() {
+            modal.style.display = 'none';
+        }
+
+        function loadEvents() {
+            const events = JSON.parse(localStorage.getItem('communityEvents')) || [];
+            displayEvents(events);
+        }
+
+        function displayEvents(events) {
+            const container = document.getElementById('events-container');
+            
+            if (events.length === 0) {
+                container.innerHTML = '<p class="empty-message">No events yet. <button onclick="document.getElementById(\'add-event-btn\').click()">Create the first event</button></p>';
+                return;
+            }
+
+            container.innerHTML = events.map(event => `
+                <div class="event-item">
+                    <div class="event-image">
+                        <img src="${event.image || 'assets/images/placeholder-1.jpg'}" alt="${event.title}" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22300%22 height=%22200%22%3E%3Crect fill=%22%23ddd%22 width=%22300%22 height=%22200%22/%3E%3C/svg%3E'">
+                    </div>
+                    <div class="event-details">
+                        <h3>${event.title}</h3>
+                        <p><strong>Date:</strong> ${event.date} at ${event.time}</p>
+                        <p><strong>Location:</strong> ${event.location}</p>
+                        <p><strong>Category:</strong> <span class="badge">${event.category}</span></p>
+                        <p>${event.description}</p>
+                    </div>
+                    <div class="event-actions">
+                        <button onclick="editEvent('${event.id}')" class="btn-small btn-primary">
+                            <i class="fas fa-edit"></i> Edit
+                        </button>
+                        <button onclick="deleteEvent('${event.id}')" class="btn-small btn-danger">
+                            <i class="fas fa-trash"></i> Delete
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function handleEventSubmit(e) {
+            e.preventDefault();
+
+            const events = JSON.parse(localStorage.getItem('communityEvents')) || [];
+            
+            const eventData = {
+                id: currentEditingEventId || Date.now().toString(),
+                title: document.getElementById('event-title').value,
+                date: document.getElementById('event-date').value,
+                time: document.getElementById('event-time').value,
+                location: document.getElementById('event-location').value,
+                category: document.getElementById('event-category').value,
+                description: document.getElementById('event-description').value,
+                image: document.getElementById('event-image').value || 'assets/images/placeholder-1.jpg'
+            };
+
+            if (currentEditingEventId) {
+                const index = events.findIndex(e => e.id === currentEditingEventId);
+                events[index] = eventData;
+                alert('Event updated successfully!');
+            } else {
+                events.push(eventData);
+                alert('Event created successfully!');
+            }
+
+            localStorage.setItem('communityEvents', JSON.stringify(events));
+            closeModal();
+            loadEvents();
+            updateHomePageEvents();
+        }
+
+        function editEvent(eventId) {
+            const events = JSON.parse(localStorage.getItem('communityEvents')) || [];
+            const event = events.find(e => e.id === eventId);
+
+            if (event) {
+                currentEditingEventId = eventId;
+                document.getElementById('modal-title').textContent = 'Edit Event';
+                document.getElementById('event-title').value = event.title;
+                document.getElementById('event-date').value = event.date;
+                document.getElementById('event-time').value = event.time;
+                document.getElementById('event-location').value = event.location;
+                document.getElementById('event-category').value = event.category;
+                document.getElementById('event-description').value = event.description;
+                document.getElementById('event-image').value = event.image;
+                modal.style.display = 'block';
+            }
+        }
+
+        function deleteEvent(eventId) {
+            if (confirm('Are you sure you want to delete this event?')) {
+                let events = JSON.parse(localStorage.getItem('communityEvents')) || [];
+                events = events.filter(e => e.id !== eventId);
+                localStorage.setItem('communityEvents', JSON.stringify(events));
+                alert('Event deleted successfully!');
+                loadEvents();
+                updateHomePageEvents();
+            }
+        }
+
+        function filterEvents() {
+            const searchTerm = document.getElementById('search-events').value.toLowerCase();
+            const category = document.getElementById('filter-category').value;
+            
+            let events = JSON.parse(localStorage.getItem('communityEvents')) || [];
+            
+            events = events.filter(event => {
+                const matchesSearch = event.title.toLowerCase().includes(searchTerm) || 
+                                     event.description.toLowerCase().includes(searchTerm);
+                const matchesCategory = !category || event.category === category;
+                return matchesSearch && matchesCategory;
+            });
+
+            displayEvents(events);
+        }
+
+        function updateHomePageEvents() {
+            // This will trigger the home page to refresh its events
+            window.dispatchEvent(new Event('eventsUpdated'));
+        }
+
+        window.addEventListener('click', function(e) {
+            if (e.target === modal) {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>

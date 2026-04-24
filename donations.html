@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Donate - Westminster Woods Community</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="logo">
+                <h1>🏘️ Westminster Woods</h1>
+                <p>Community Neighborhood Group</p>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="events.html">Events</a></li>
+                <li><a href="photos.html">Photos</a></li>
+                <li><a href="news.html">News & Updates</a></li>
+                <li><a href="volunteer.html">Volunteer</a></li>
+                <li><a href="about.html">About Us</a></li>
+                <li><a href="contact.html">Contact</a></li>
+                <li><a href="donations.html" class="active btn-donate">Donate</a></li>
+                <li><a href="admin-login.html" class="btn-admin">Admin</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <section class="page-header">
+        <div class="container">
+            <h1>Support Our Community</h1>
+            <p>Your donation helps us build a stronger, more vibrant neighborhood</p>
+        </div>
+    </section>
+
+    <!-- Donation Section -->
+    <section class="donation-section">
+        <div class="container">
+            <div class="donation-intro">
+                <h2>Make a Difference</h2>
+                <p>Westminster Woods relies on generous donations from community members like you. Every contribution helps us organize events, support neighbors in need, and build a stronger community.</p>
+            </div>
+
+            <div class="donation-grid">
+                <!-- PayPal Donation -->
+                <div class="donation-card">
+                    <i class="fab fa-paypal"></i>
+                    <h3>Donate via PayPal</h3>
+                    <p>Secure payment with credit cards or PayPal account</p>
+                    <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank">
+                        <input type="hidden" name="cmd" value="_s-xclick">
+                        <input type="hidden" name="hosted_button_id" value="YOUR_PAYPAL_BUTTON_ID">
+                        <button type="submit" class="btn btn-primary">Donate Now</button>
+                    </form>
+                </div>
+
+                <!-- Canada Helps Donation -->
+                <div class="donation-card">
+                    <i class="fas fa-hand-holding-heart"></i>
+                    <h3>Donate via Canada Helps</h3>
+                    <p>Support us through Canada's leading charitable platform</p>
+                    <a href="https://www.canadahelps.org/" target="_blank" class="btn btn-primary">Donate Now</a>
+                </div>
+
+                <!-- Direct Bank Transfer -->
+                <div class="donation-card">
+                    <i class="fas fa-university"></i>
+                    <h3>Bank Transfer</h3>
+                    <p>Transfer directly to our bank account</p>
+                    <a href="#bank-details" class="btn btn-primary">View Details</a>
+                </div>
+            </div>
+
+            <!-- Donation Amounts -->
+            <div class="donation-amounts">
+                <h3>Choose Your Donation Amount</h3>
+                <div class="amount-grid">
+                    <div class="amount-card">
+                        <p class="amount">$25</p>
+                        <p class="description">Helps provide supplies for one event</p>
+                        <button class="btn btn-outline">Select</button>
+                    </div>
+                    <div class="amount-card">
+                        <p class="amount">$50</p>
+                        <p class="description">Supports community programs</p>
+                        <button class="btn btn-outline">Select</button>
+                    </div>
+                    <div class="amount-card">
+                        <p class="amount">$100</p>
+                        <p class="description">Funds a family support initiative</p>
+                        <button class="btn btn-outline">Select</button>
+                    </div>
+                    <div class="amount-card">
+                        <p class="amount">$250</p>
+                        <p class="description">Sponsors a community gathering</p>
+                        <button class="btn btn-outline">Select</button>
+                    </div>
+                    <div class="amount-card">
+                        <p class="amount">$500</p>
+                        <p class="description">Funds quarterly major event</p>
+                        <button class="btn btn-outline">Select</button>
+                    </div>
+                    <div class="amount-card">
+                        <p class="amount">Custom</p>
+                        <p class="description">Your choice</p>
+                        <input type="number" placeholder="Enter amount" class="custom-amount">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Impact Section -->
+            <div class="impact-section">
+                <h3>Your Impact</h3>
+                <div class="impact-grid">
+                    <div class="impact-card">
+                        <i class="fas fa-calendar-check"></i>
+                        <h4>Events & Gatherings</h4>
+                        <p>Your donation helps organize community events that bring neighbors together</p>
+                    </div>
+                    <div class="impact-card">
+                        <i class="fas fa-hands-helping"></i>
+                        <h4>Community Support</h4>
+                        <p>We help families and individuals in need through various support programs</p>
+                    </div>
+                    <div class="impact-card">
+                        <i class="fas fa-book"></i>
+                        <h4>Educational Programs</h4>
+                        <p>Donations fund workshops, training, and educational initiatives</p>
+                    </div>
+                    <div class="impact-card">
+                        <i class="fas fa-tree"></i>
+                        <h4>Community Projects</h4>
+                        <p>Help us beautify and improve our neighborhood with community projects</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bank Details -->
+            <div id="bank-details" class="bank-details">
+                <h3>Bank Transfer Details</h3>
+                <div class="details-box">
+                    <p><strong>Account Holder:</strong> Westminster Woods Community Group</p>
+                    <p><strong>Bank:</strong> [Your Bank Name]</p>
+                    <p><strong>Account Number:</strong> [Account Number]</p>
+                    <p><strong>Transit Number:</strong> [Transit Number]</p>
+                    <p><strong>Routing Number:</strong> [Routing Number]</p>
+                </div>
+            </div>
+
+            <!-- FAQ Section -->
+            <div class="faq-section">
+                <h3>Frequently Asked Questions</h3>
+                <div class="faq-item">
+                    <h4>Is my donation tax-deductible?</h4>
+                    <p>Yes, donations through registered channels may be tax-deductible. Please keep your receipt for tax purposes.</p>
+                </div>
+                <div class="faq-item">
+                    <h4>Can I set up a monthly donation?</h4>
+                    <p>Yes! PayPal and Canada Helps both support recurring monthly donations.</p>
+                </div>
+                <div class="faq-item">
+                    <h4>Where does my money go?</h4>
+                    <p>All donations support community events, support programs, and neighborhood improvement projects.</p>
+                </div>
+                <div class="faq-item">
+                    <h4>Can I donate anonymously?</h4>
+                    <p>Yes, most platforms support anonymous donations. Contact us for more information.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-section">
+                    <h4>Westminster Woods</h4>
+                    <p>Building stronger neighborhoods through community engagement and support.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="events.html">Events</a></li>
+                        <li><a href="about.html">About Us</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Get Involved</h4>
+                    <ul>
+                        <li><a href="volunteer.html">Volunteer</a></li>
+                        <li><a href="donations.html">Donate</a></li>
+                        <li><a href="news.html">News & Updates</a></li>
+                        <li><a href="photos.html">Photos</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Follow Us</h4>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-linkedin"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Westminster Woods Community. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/script.js"></script>
+</body>
+</html>
